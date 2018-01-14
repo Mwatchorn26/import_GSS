@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import psycopg2
+import insert-vendor.py
 #import pandas as pd
 #from tabulate import tabulate
 
