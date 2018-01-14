@@ -1134,6 +1134,25 @@ CREATE TABLE public."gss_V_WORKCENTERS" (
 WITH (
 	OIDS=FALSE
 ) ;
+
+
+
+CREATE TABLE public."gss_migration_status" (
+	"odoo_ready_to_receive" text NULL,
+	"gss_done" text NULL
+)
+WITH (
+	OIDS=FALSE
+) ;
+
+
+
+
+
+
+
+
+
 """
 
 
@@ -1177,7 +1196,7 @@ def connect():
         cur = conn.cursor()
         
         # execute the create tables queries
-        cur.execute(create_gss_table_departments)
+        cur.execute(create_gss_tables)
 
     
         # execute a statement
