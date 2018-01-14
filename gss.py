@@ -1,9 +1,13 @@
 #!/usr/bin/python
 import psycopg2
-import pandas as pd
-from tabulate import tabulate
+#import pandas as pd
+#from tabulate import tabulate
 
+set_odoo_ready="""
+INSERT INTO gss_migration_status (odoo_ready_to_receive)
+VALUES ('1');
 
+"""
 
 
 create_gss_tables_test = """CREATE TABLE public."gss_test_table2" (
@@ -1147,11 +1151,8 @@ WITH (
 
 
 
-
-
-
-
-
+INSERT INTO gss_migration_status (odoo_ready_to_receive)
+VALUES ('1');
 
 """
 
