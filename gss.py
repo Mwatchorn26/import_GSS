@@ -1143,6 +1143,7 @@ WITH (
 
 
 CREATE TABLE public."gss_migration_status" (
+        "id" serial NOT NULL, 
 	"odoo_ready_to_receive" text NULL,
 	"gss_done" text NULL
 )

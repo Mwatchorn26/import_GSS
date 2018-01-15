@@ -56,7 +56,7 @@ strTravelExpensesList = """Snack, Food, Meal, Dinner, Supper, Lunch, Breakfast, 
 
 
 
-sqlInsertProductTemplate = """INSERT INTO "product_template" VALUES (
+sqlInsertProductTemplate = """INSERT INTO "product_template" 
 	warranty float8 NULL,
 	uos_id int4 NULL,
 	list_price numeric NULL,
