@@ -1,9 +1,3 @@
-#!/usr/bin/python
-import psycopg2
-import insert-vendor.py
-import time
-import pandas as pd
-#from tabulate import tabulate
 
 create_gss_tables = """CREATE TABLE public."gss_ANALYTIC_ACCOUNTS" (
 	"EXTERNAL_ID" text NULL,
@@ -1145,51 +1139,3 @@ VALUES ('1');
 
 
 
-
-
-
-
-
-def connect():
-    conn_string = "dbname=fix_me user=fix_me password=fix_me"
-    if conn_string == "dbname=fix_me user=fix_me password=fix_me":
-        print("OOPS: You forgot to set the DB name, DB user and DB password")
-        return
-
-    try:
-        conn = psycopg2.connect(conn_string)
-   
-     
-        # create a cursor
-        cur = conn.cursor()
-        
-        # execute the create tables queries
-        cur.execute(create_gss_tables)
-
-    
-        # execute a statement
-        #print('PostgreSQL database version:')
-        #cur.execute('SELECT version()')
-        BOM_TEXT = pd.read_sql('SELECT * from gss_migration_status WHERE gss_done', conn)
-	#print tabulate(BOM_TEXT, headers='keys', tablefmt='psql')
-        
-        # display the PostgreSQL database server version
-        #db_version = cur.fetchone()
-        #print(db_version)
- 
-         # close the communication with the PostgreSQL
-        cur.close()
-        conn.commit()
-        for notice in conn.notices:
-            print(notice)
-
-
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    finally:
-        if conn is not None:
-            conn.close()
-            print('Database connection closed.')
-            
-if __name__ == '__main__':
-    connect()

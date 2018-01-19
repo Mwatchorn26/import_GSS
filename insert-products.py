@@ -50,7 +50,7 @@ sqlProductTemplate_PARTIAL = """INSERT INTO product_product
 
 
 
-strTravelExpensesList = """Snack, Food, Meal, Dinner, Supper, Lunch, Breakfast, Car, Car Rental, Gas, Gasoline, Fair, Toll, Hotel, Train, Taxi, Airplane, Flight"""
+strTravelExpensesList = """Meal, Car Rental, Fuel, Toll, Hotel, Train, Taxi, Flight, Flight Change, Train Change"""
 
 
 
@@ -116,10 +116,29 @@ sqlInsertProductProduct="""INSERT INTO product_product (
 	active bool NULL,
 	product_tmpl_id int4 NOT NULL,
 	image_variant bytea NULL,
+"""
 
 
-
-
+sqlProductCategory="""
+AA          
+BI          
+BP          
+CM          
+CR          
+EC          
+ES          
+HC          
+MC          
+MP          
+PC          
+PI          
+RM          
+SP          
+SU          
+ZA          
+ZE          
+ZF          
+ZG     """
 
 
 
