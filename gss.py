@@ -1,12 +1,11 @@
 #!/usr/bin/python
 import psycopg2
-import insert-vendor.py
 import time
 import pandas as pd
 #from tabulate import tabulate
 import json
 import initialize
-
+import pudb
 
 
 
@@ -47,8 +46,8 @@ def RunMyQuery(cur, sqlQuery):
 def run():
     with open('config.json') as f:
         conf = json.load(f)
-    
-    conn_string = "host={} dbname={} user={} password={}".format(database, user, passw)
+    pudb.set_trace()
+    conn_string = "dbname={} user={} password={}".format(conf['database'], conf['user'], conf['passw'])
     #conn_string = "dbname=fix_me user=fix_me password=fix_me"
 
     #if conn_string == "dbname=fix_me user=fix_me password=fix_me":
@@ -63,10 +62,9 @@ def run():
         cur = conn.cursor()
         
         # execute the create tables queries
-        cur.execute(create_gss_tables)
+        cur.execute(initialize.strInsertNewCategories)
 
-
-        initialize(cur)
+        #initialize(cur)
 
 
 
@@ -74,7 +72,7 @@ def run():
         # execute a statement
         #print('PostgreSQL database version:')
         #cur.execute('SELECT version()')
-        BOM_TEXT = pd.read_sql('SELECT * from gss_migration_status WHERE gss_done', conn)
+        #BOM_TEXT = pd.read_sql('SELECT * from gss_migration_status WHERE gss_done', conn)
 	#print tabulate(BOM_TEXT, headers='keys', tablefmt='psql')
         
         # display the PostgreSQL database server version
