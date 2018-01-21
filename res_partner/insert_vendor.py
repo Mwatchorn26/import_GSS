@@ -35,3 +35,34 @@ query_VENDOR_MASTER = """SELECT * INTO res_partner
                  LEFT JOIN """ + subQuery_VENDOR_FAX + """ AS ADL3 ON (ADL3.VENDOR = MSTR.VENDOR))
                  WHERE MSTR.VENDOR <> '');"""
 
+
+abandonedExtensionStuff ="""/*    case when Left(phone, 1) = "+" And Len(phone) = 11 Then              '+90 1234 5678'
+        phone = Replace(phone, "+", "")
+        PhoneFormat = "+" & Left(phone, 2) & " " & substring(phone, 3, 4) & " " & Right(phone, 4)
+        case Length(ext) > 0 Then PhoneFormat = concat(PhoneFormat , " EXT " , ext )
+        'Debug.Print PhoneFormat'
+        'Exit Function'
+    end */"""
+  
+phone = """	update "TABLE" set phone = replace(phone, '+', '');  
+	update "TABLE" set phone = replace(phone, '(', '');  
+	update "TABLE" set phone = replace(phone, ')', '');  
+	update "TABLE" set phone = replace(phone, '-', '');  
+	update "TABLE" set phone = replace(phone, ' ', '');
+	update "TABLE" set phone = 
+    case when Length(phone) = 10 Then                                       /* '(123) 456-7890'*/
+        	concat( "(" , left(phone, 3) , ") " , substring(phone, 4, 3) , "-" , right(phone, 4))
+    	when left(phone,3)="613" then
+    	    concat( "(" , left(phone, 3) , ") " , substring(phone, 4, 3) , "-" , substring(phone,7, 4), right(phone,11))
+    
+    	when  Length(phone) = 12 Then                                    /* '0123 12 34 5678', '0123 12 34 5678 x90123' */
+        	concat( "+" , left(phone, 4) , " " , substring(phone, 5, 4) , " " , right(phone, 4))
+    	when Length(phone) = 14 then                                    /* '0123 4563 78 9012' */
+        	concat( "+" & left(phone, 4) , " " , substring(phone, 3, 2) , " " , substring(phone, 6, 4) , "-" , right(phone, 4))
+    	when Length(phone) > 4 then                                                           /*'01234567891'*/
+        	concat(left(phone, Length(phone) - 4) , "-" , right(phone, 4))
+    	else
+        	phone
+    	end;"""
+ext = """    /*case when  Length(ext) > 0 Then concat(PhoneFormat ," EXT " , ext) end;*/"""
+

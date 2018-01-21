@@ -1,1 +1,1 @@
-import insert_vendor
+import run_res_partner
