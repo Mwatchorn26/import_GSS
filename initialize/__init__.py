@@ -1,1 +1,1 @@
-import init_db
+import run_init

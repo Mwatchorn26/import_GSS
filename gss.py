@@ -5,33 +5,73 @@ import pandas as pd
 #from tabulate import tabulate
 import json
 import pudb
-import initialize
+#import initialize
+import res_partner
 
 conn_string=''
 
-#RENAME THE DOUBLE OCCURANCES OF 
-#update "res_partner"
-#set state_id = (select id from "res_country_state" where name='Ontario' limit 1) --52
-#where state_id = (select id from "res_country_state" where name='ONTARIO' limit 1) --66
-#;
-#
-#DELETE FROM res_country_state where name='ONTARIO'
-#delete from "res_country_state" where "name"='ONTARIO';
+#Ensure you have this json in a file called config.json in the same directory (I only use databse, user and passw).
+#{
+#  "database": "db_name",
+#  "user": "user_name",
+#  "passw": "user_password"
+#}
 
-# GIVE COUNTRY NAME FOR PARTNERS WITH JUST A PROVINCE OR STATE PROVIDED.
-#UPDATE res_partner set "country_id"=(select id from res_country where "name"='United States') WHERE "state_id" IN (select "id" from res_country_state where country_id = (select id from res_country where "name"='United States'));
-#UPDATE res_partner set "country_id"=(select id from res_country where "name"='Canada') WHERE "state_id" IN (select "id" from res_country_state where country_id = (select id from res_country where "name"='Canada'));
+def run():
+    with open('config.json') as f:
+        conf = json.load(f)
+    #pudb.set_trace()
+    global conn_string
+    conn_string = "dbname={} user={} password={}".format(conf['database'], conf['user'], conf['passw'])
+
+    #INITIALIZE SYSTEM
+#    initialize.run_init.init_sys(conn_string)
+
+    #SELECTION CRITERIA
+
+    #EMPLOYEE PARTNERS
+
+    #CUSTOMER PARTNERS
+    #partners
+
+    #VENDOR PARTNERS
+    res_partner.run_res_partner.run_res_partner(conn_string)
+
+    #PROJECTS
+
+    #ROUTERS
+
+    #PRODUCTS
+
+    #BOM
+
+    #QUOTES
+
+    #SALES ORDER
+
+    #PURCHASE ORDERS
+
+    #RECEIVING
+
+    #TIME & ATTENDANCE
+
+    #MANUFACTURING ORDERS
+
+
+    return
+            
+if __name__ == '__main__':
+    run()
 
 
 def psyQuery(sqlQuery):
+
+    global conn_string
 
     if conn_string=='':
         with open('config.json') as f:
             conf = json.load(f)
             conn_string = "dbname={} user={} password={}".format(conf['database'], conf['user'], conf['passw'])
-
-    pudb.set_trace()
-    initialize.init_db.init_pg(conn_string)
 
     try:
         conn = psycopg2.connect(conn_string)
@@ -57,50 +97,4 @@ def psyQuery(sqlQuery):
         if conn is not None:
             conn.close()
             print('Database connection closed.')
-            
-
-
     return
-
-#Ensure you have this json in a file called config.json in the same directory (I only use databse, user and passw).
-#{
-#  "database": "db_name",
-#  "user": "user_name",
-#  "passw": "user_password"
-#}
-
-def run():
-    with open('config.json') as f:
-        conf = json.load(f)
-    pudb.set_trace()
-    conn_string = "dbname={} user={} password={}".format(conf['database'], conf['user'], conf['passw'])
-
-    initialize.init_db(conn_string)
-
-    try:
-        conn = psycopg2.connect(conn_string)
-     
-        # create a cursor
-        cur = conn.cursor()
-        
-        # execute the create tables queries
-        cur.execute(initialize.strInsertNewCategories)
- 
-        # close the communication with the PostgreSQL
-        cur.close()
-        conn.commit()
-        for notice in conn.notices:
-            print(notice)
-
-    except (Exception, psycopg2.DatabaseError) as error:
-        print()
-        print("ERROR")
-        print(error)
-        print()
-    finally:
-        if conn is not None:
-            conn.close()
-            print('Database connection closed.')
-            
-if __name__ == '__main__':
-    run()

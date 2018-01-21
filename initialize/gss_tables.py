@@ -1115,6 +1115,11 @@ WITH (
 INSERT INTO gss_migration_status (odoo_ready_to_receive)
 VALUES ('1');
 
+
+GRANT ALL PRIVILEGES ON TABLE gss_migration_status TO odoo;
+GRANT ALL PRIVILEGES ON TABLE gss_migration_status TO gss;
+
+
 """
 
 
