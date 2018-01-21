@@ -36,6 +36,9 @@ def init_sys(conn_string):
     qry(uom.strInsertNewCategories)
     print("Inserting new Units of Measure")
     qry(uom.strInsertNewUoM)
+    print("Converting old to new Units of Measure")
+    qry(uom.strUpdateUoM)
+
 
     print("\nINITIALIZE COMPLETE\n")
 
