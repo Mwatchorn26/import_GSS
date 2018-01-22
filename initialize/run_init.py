@@ -7,7 +7,7 @@ import psycopg2
 import pudb
 import pandas as pd
 import sys
-
+import phoneNumbers as tel
 
 def init_sys(conn_string):
     print("\n\nINITIALIZING SYSTEM")
@@ -38,6 +38,15 @@ def init_sys(conn_string):
     qry(uom.strInsertNewUoM)
     print("Converting old to new Units of Measure")
     qry(uom.strUpdateUoM)
+
+    tel.cleanPhoneNumbers("gss_V_CUSTOMER_MASTER","TELEPHONE")
+    tel.cleanPhoneNumbers("gss_v_EMPLOYEES","PHONE")
+    tel.cleanPhoneNumbers("gss_v_PROJECT_MASTER","PHONE")
+    tel.cleanPhoneNumbers("gss_v_VEND_MSTR_ADDL","BUY_PHONE")
+    tel.cleanPhoneNumbers("gss_v_VEND_MSTR_ADDL","BUY_FAX")
+    tel.cleanPhoneNumbers("gss_v_VEND_MSTR_ADDL","PAY_PHONE")
+    tel.cleanPhoneNumbers("gss_v_VEND_MSTR_ADDL","PAY_FAX")
+
 
 
     print("\nINITIALIZE COMPLETE\n")
