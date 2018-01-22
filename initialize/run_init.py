@@ -12,12 +12,12 @@ import phoneNumbers as tel
 def init_sys(conn_string):
     print("\n\nINITIALIZING SYSTEM")
     print("\nCreating GSS tables")
-#TEMPORARILY COMMENTED OUT    qry(gss_tables.create_gss_tables)
+    qry(gss_tables.create_gss_tables)
 
     #wait for data to be copied over to the new tables...
 
     while not gssDone():
-        sleep(1)
+        sleep(10)
         sys.stdout.write(".")
 
     return
@@ -39,9 +39,14 @@ def init_sys(conn_string):
     print("Converting old to new Units of Measure")
     qry(uom.strUpdateUoM)
 
+    print("\nStandardizing Phone Numbers")
+    print("Standardizing Customer Master Phone Numbers")
     tel.cleanPhoneNumbers("gss_V_CUSTOMER_MASTER","TELEPHONE")
+    print("Standardizing Customer Master Phone Numbers")
     tel.cleanPhoneNumbers("gss_v_EMPLOYEES","PHONE")
+    print("Standardizing Customer Master Phone Numbers")
     tel.cleanPhoneNumbers("gss_v_PROJECT_MASTER","PHONE")
+    print("Standardizing Vendor Master ADDL Phone Numbers")
     tel.cleanPhoneNumbers("gss_v_VEND_MSTR_ADDL","BUY_PHONE")
     tel.cleanPhoneNumbers("gss_v_VEND_MSTR_ADDL","BUY_FAX")
     tel.cleanPhoneNumbers("gss_v_VEND_MSTR_ADDL","PAY_PHONE")
