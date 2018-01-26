@@ -40,4 +40,13 @@ values ('{}','everyone',(select id from "ir_model" where "name"='Task'),
 		clock_timestamp() , clock_timestamp() )
 returning id as alias_id;
 
+
+/*Add Project Task Stages(types?wft!Who named that): Created, Active, Cancelled, Shelved, Done*/
+insert into project_task_type_rel
+select account_analytic_account.id as project_id, project_task_type.id as task_id
+from account_analytic_account 
+left join project_task_type on project_task_type.id<>-1
+where project_task_type."name" in ('Active','Done','Cancelled','Created','Shelved');
+
+
 """
