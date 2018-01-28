@@ -143,4 +143,55 @@ ZG     """
 
 
 
+insertTemplates="""
+insert into product_template (warranty, list_price, write_uid, mes_type, uom_id,description_purchase, create_date, uos_coeff, create_uid, rental, company_id, uom_po_id, "type", description, write_date, active, categ_id, sale_ok, "name", description_sale, track_incoming, sale_delay, track_all, track_outgoing, purchase_ok, track_production, produce_delay, hr_expense_ok) ;
 
+select distinct 0 as warranty,0.00 as list_price, 1 as write_uid, 'fixed' as mes_type, (select id from product_category where "name"=im."PRODUCT_LINE") as uom_id,
+im."DESCRIPTION" as description_purchase, clock_timestamp() as create_date, 1.0 as uos_coeff, 1 as create_uid, 'false' as rental, 1 as company_id, 
+(select id from product_category where "name"=im."PRODUCT_LINE") as uom_po_id, 'product' as "type", im."DESCRIPTION" as description, 
+clock_timestamp() as write_date, true as active, im."PRODUCT_LINE" as categ_id, true as sale_ok, 
+case when im."PART" like '___-_____-__%' then
+				left(im."PART",12)
+			else
+				im."PART"
+			end  as "name", 
+im."DESCRIPTION" as description_sale, 
+false as track_incoming, false as sale_delay, false as track_all, false as track_outgoing, 
+(select case when im."PART" like '___-_____-__%' then false else true end) as purchase_ok, false as track_production, 1 as produce_delay, 
+(select case when upper(im."PART") like 'EX:%'  then true else false end) as hr_expense_ok
+from "gss_V_INVENTORY_MSTR" as im
+where case when im."PART" like '___-_____-__%' then
+				concat(left(im."PART",12),im."DESCRIPTION")
+			else
+				concat(im."PART",im."DESCRIPTION")
+			end not in (select concat("name",description_purchase) as "exists" from product_template)
+and im."PART" like '001%';
+
+order by im."PART";
+;
+
+"""
+
+insertProductProduct="""
+insert into product_product (create_uid, create_date,write_uid, default_code, write_date, name_template, active, product_tmpl_id);
+
+select 1 as create_uid, clock_timestamp() as create_date, 1 as write_uid, 
+case when gss."PART" like '___-_____-__%' then
+				case when length(gss."PART")>12 then 
+						left(gss."PART",12) || ' (' || trim(right(gss."PART",3)) || ')' 
+					else
+						left(gss."PART",12) end
+			else
+				gss."PART"
+			end 
+as default_code, clock_timestamp() as write_date,   
+case when gss."PART" like '___-_____-__%' then
+				left(gss."PART",12)
+			else
+				gss."PART"
+			end 
+as name_template, 
+true as active,
+(select id from product_template as pt where left(pt."name",12)= left(gss."PART",12)) as product_tmpl_id
+from "gss_V_INVENTORY_MSTR" as gss;
+"""
