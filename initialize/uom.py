@@ -25,10 +25,9 @@ uom_conversions="""
 case 
 when "IN" then "Inch(es)"
 when "EA" then "Unit(s)"
-when "" then "Units(s)"
 when "SI" then "Square Inches"
 when "FT" then "Foot(ft)"
-when "PK" then
+when "PK" then "Box(es)"
 when "MT" then "m"
 when "HR" then "Hour(s)"
 when "SH" then "Sheet(s)"
@@ -70,7 +69,7 @@ gal(s)		GA
 qt		QU
 Week(s)		WK
 Lot		LO
-		DR
+Unit(s)		DR
 Unit(s)		PR
 Set		ST
 Day(s)		DA
