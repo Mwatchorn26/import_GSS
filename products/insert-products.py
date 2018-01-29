@@ -22,134 +22,64 @@ strLot = """  CASE WHEN FLAG_LOT='Y' THEN 'True'
               CASE WHEN FLAG_LOT='Y','True' 
                    ELSE 'False' as TRACK_OUTGOING,"""
 
-
-#Prepare all the other fields
-strOtherFields = """  CASE WHEN "PRODUCT_LINE"='ZA' THEN 'Consumable'
-                           ELSE 'Stockable'
-                      END  AS TYPE,
-                      'Unit(s)' AS UOM_PO_ID,
-                      'Unit(s)' AS UOM_ID,
-                       "QTY_ONHAND" AS "QTY_AVAILABLE",
-                 ;"""
-
-#Assemble the full query using the blocks from above to limit the number of multi-line sections use. (VBA has a limit)
-sqlProductTemplate_PARTIAL = """INSERT INTO product_product 
-                  FROM (   SELECT 'True' as ACTIVE, 'False' AS PURCHASE_OK, 'False' AS RENTAL, 'True' AS SALE_OK, 
-                           INV.PART AS DEFAULT_CODE, 
-                           INV.DESCRIPTION AS NAME,
-                """
-                            & strOtherFields &
-                            & strLot &
-                            & strPJFM & 
-                """        '' AS UM_PURCHASING, 'Unit(s)' AS UM_INVENTORY, '' AS VENDOR, TRIM(INV.AMT_COST) AS INV_COST, CDATE(TRIM(INV.DATE_LAST_CHG)) AS DATE_LAST_RECEIVED, CDATE(TRIM(INV.DATE_LAST_CHG)) AS DATE_ORDER
-                           
-                           FROM (gss_V_INVENTORY_MSTR AS INV 
-                           LEFT JOIN gss_V_INVENTORY_MST2 AS INV2 ON (INV.PART = INV2.PART AND INV.LOCATION = INV2.LOCATION))
-                           WHERE INV2.CODE_SOURCE IN ('F','M')
-                       );"""
-
-
-
-strTravelExpensesList = """Meal, Car Rental, Fuel, Toll, Hotel, Train, Taxi, Flight, Flight Change, Train Change"""
-
-
-
-
-
-sqlInsertProductTemplate = """INSERT INTO "product_template" 
-	warranty float8 NULL,
-	uos_id int4 NULL,
-	list_price numeric NULL,
-	weight numeric NULL,
-	color int4 NULL,
-	image bytea NULL,
-	write_uid int4 NULL,
-	mes_type varchar NULL,
-	uom_id int4 NOT NULL,
-	description_purchase text NULL,
-	create_date timestamp NULL,
-	uos_coeff numeric NULL,
-	create_uid int4 NULL,
-	rental bool NULL,
-	product_manager int4 NULL,
-	message_last_post timestamp NULL,
-	company_id int4 NULL,
-	state varchar NULL,
-	uom_po_id int4 NOT NULL,
-	"type" varchar NOT NULL,
-	description text NULL,
-	weight_net numeric NULL,
-	volume float8 NULL,
-	write_date timestamp NULL,
-	active bool NULL,
-	categ_id int4 NOT NULL,
-	sale_ok bool NULL,
-	image_medium bytea NULL,
-	"name" varchar NOT NULL,
-	description_sale text NULL,
-	image_small bytea NULL,
-	loc_row varchar(16) NULL,
-	loc_rack varchar(16) NULL,
-	track_incoming bool NULL,
-	sale_delay float8 NULL,
-	track_all bool NULL,
-	track_outgoing bool NULL,
-	loc_case varchar(16) NULL,
-	purchase_ok bool NULL,
-	track_production bool NULL,
-	produce_delay float8 NULL,
-	hr_expense_ok bool NULL,
-VALUES (
-);"""
-
-
-sqlInsertProductProduct="""INSERT INTO product_product (
-	id serial NOT NULL,
-	create_uid int4 NULL,
-	create_date timestamp NULL,
-	ean13 varchar(13) NULL,
-	write_uid int4 NULL,
-	message_last_post timestamp NULL,
-	default_code varchar NULL,
-	write_date timestamp NULL,
-	name_template varchar NULL,
-	active bool NULL,
-	product_tmpl_id int4 NOT NULL,
-	image_variant bytea NULL,
+fixProductLine="""
+/* FIX PRODUCT LINE (aka categ_id) */
+update "gss_V_INVENTORY_MSTR"
+set "PRODUCT_LINE" = 
+case
+when "PRODUCT_LINE"='ZH' then 'Advertising & Promotion'
+when "PRODUCT_LINE"='AA' then 'Automated Assembly'
+when "PRODUCT_LINE"='BI' then 'Bin Inventory'
+when "PRODUCT_LINE"='BP' then 'Build To Print'
+when "PRODUCT_LINE"='ZI' then 'Computer Equipment'
+when "PRODUCT_LINE"='ZJ' then 'Computer Licenses'
+when "PRODUCT_LINE"='ZK' then 'Computer Software'
+when "PRODUCT_LINE"='ZA' then 'Consumables'
+when "PRODUCT_LINE"='CM' then 'Contract Manufacturing'
+when "PRODUCT_LINE"='CR' then 'Contract Repair'
+when "PRODUCT_LINE"='EC' then 'Electrical Components'
+when "PRODUCT_LINE"='ES' then 'Engineering Services'
+when "PRODUCT_LINE"='EQ' then 'Equipment Rental'
+when "PRODUCT_LINE"='FB' then 'Freight & Brokerage'
+when "PRODUCT_LINE"='HC' then 'Hydraulic Components'
+when "PRODUCT_LINE"='ZL' then 'Indirect Labour Accounts'
+when "PRODUCT_LINE"='IN' then 'Innovations'
+when "PRODUCT_LINE"='LS' then 'Lab Services'
+when "PRODUCT_LINE"='ZC' then 'Laboratory Expenses'
+when "PRODUCT_LINE"='MP' then 'Machined Parts'
+when "PRODUCT_LINE"='MC' then 'Mechanical Components'
+when "PRODUCT_LINE"='SP' then 'OEM Spare Parts (why non-Inv?)'
+when "PRODUCT_LINE"='ZM' then 'Office Supplies'
+when "PRODUCT_LINE"='SD' then 'Payroll Deduction'
+when "PRODUCT_LINE"='PI' then 'Platform Inventory'
+when "PRODUCT_LINE"='PC' then 'Pneumatic Components'
+when "PRODUCT_LINE"='ZD' then 'Quality Expenditures'
+when "PRODUCT_LINE"='ZN' then 'R&M Building'
+when "PRODUCT_LINE"='ZO' then 'R&M Equipment - On Demand'
+when "PRODUCT_LINE"='ZP' then 'R&M Equipment - Prevenative'
+when "PRODUCT_LINE"='RM' then 'Raw Material'
+when "PRODUCT_LINE"='ZQ' then 'Safety & Environmental Costs'
+when "PRODUCT_LINE"='ZR' then 'Shop Equipment >$500'
+when "PRODUCT_LINE"='ZE' then 'Shop Supplies'
+when "PRODUCT_LINE"='ZF' then 'Shop Tools <$500'
+when "PRODUCT_LINE"='SU' then 'Subcontractors'
+when "PRODUCT_LINE"='TA' then 'Tool Allowance'
+when "PRODUCT_LINE"='ZG' then 'Tooling'
+when "PRODUCT_LINE"='ZS' then 'Training & Seminars'
+when "PRODUCT_LINE"='ZT' then 'Waste Removal'
+else ''
+end;
 """
-
-
-sqlProductCategory="""
-AA          
-BI          
-BP          
-CM          
-CR          
-EC          
-ES          
-HC          
-MC          
-MP          
-PC          
-PI          
-RM          
-SP          
-SU          
-ZA          
-ZE          
-ZF          
-ZG     """
-
 
 
 
 insertTemplates="""
-insert into product_template (warranty, list_price, write_uid, mes_type, uom_id,description_purchase, create_date, uos_coeff, create_uid, rental, company_id, uom_po_id, "type", description, write_date, active, categ_id, sale_ok, "name", description_sale, track_incoming, sale_delay, track_all, track_outgoing, purchase_ok, track_production, produce_delay, hr_expense_ok) ;
+insert into product_template (warranty, list_price, write_uid, mes_type, uom_id,description_purchase, create_date, uos_coeff, create_uid, rental, company_id, uom_po_id, "type", description, write_date, active, categ_id, sale_ok, "name", description_sale, track_incoming, sale_delay, track_all, track_outgoing, purchase_ok, track_production, produce_delay, hr_expense_ok);
 
-select distinct 0 as warranty,0.00 as list_price, 1 as write_uid, 'fixed' as mes_type, (select id from product_category where "name"=im."PRODUCT_LINE") as uom_id,
-im."DESCRIPTION" as description_purchase, clock_timestamp() as create_date, 1.0 as uos_coeff, 1 as create_uid, 'false' as rental, 1 as company_id, 
-(select id from product_category where "name"=im."PRODUCT_LINE") as uom_po_id, 'product' as "type", im."DESCRIPTION" as description, 
-clock_timestamp() as write_date, true as active, im."PRODUCT_LINE" as categ_id, true as sale_ok, 
+select distinct 0 as warranty,0.00 as list_price, 1 as write_uid, 'fixed' as mes_type, (select id from product_uom where "name"=im."UM_INVENTORY") as uom_id,
+im."DESCRIPTION" as description_purchase, clock_timestamp() as create_date, 1.0 as uos_coeff, 1 as create_uid, false as rental, 1 as company_id, 
+(select id from product_uom where "name"=im."UM_PURCHASING") as uom_po_id, 'product' as "type", im."DESCRIPTION" as description, 
+clock_timestamp() as write_date, true as active, (select id from product_category where "name"= im."PRODUCT_LINE" limit 1) as categ_id, true as sale_ok, 
 case when im."PART" like '___-_____-__%' then
 				left(im."PART",12)
 			else
@@ -166,10 +96,6 @@ where case when im."PART" like '___-_____-__%' then
 				concat(im."PART",im."DESCRIPTION")
 			end not in (select concat("name",description_purchase) as "exists" from product_template)
 and im."PART" like '001%';
-
-order by im."PART";
-;
-
 """
 
 insertProductProduct="""
