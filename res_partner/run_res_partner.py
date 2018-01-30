@@ -2,7 +2,15 @@ import insert_vendor
 #import psyQuery as qry
 import pudb
 
-from gss import psyQuery as qry
+#from psyQuery import psyQuery as qry
+import os
+import sys
+p = os.path.abspath('../..')
+if p not in sys.path:
+    sys.path.append(p)
+from psyQuery import psyQuery as qry
+
+
 
 def run_res_partner(conn_string):
     print("\n\nUPDATING RES_PARTNER")

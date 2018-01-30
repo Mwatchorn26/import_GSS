@@ -1,7 +1,14 @@
 import cust_to_lead
 import uom
 import gss_tables
-from gss import psyQuery as qry
+#from psyQuery import psyQuery as qry
+import os
+import sys
+p = os.path.abspath('../..')
+if p not in sys.path:
+    sys.path.append(p)
+from psyQuery import psyQuery as qry
+
 from time import sleep
 import psycopg2
 import pudb
@@ -12,6 +19,7 @@ import phoneNumbers as tel
 def init_sys(conn_string):
     print("\n\nINITIALIZING SYSTEM")
     print("\nCreating GSS tables")
+    '''
     qry(gss_tables.create_gss_tables)
 
     #wait for data to be copied over to the new tables...
@@ -31,7 +39,7 @@ def init_sys(conn_string):
     qry(cust_to_lead.strDeleteTagsFromLeads)
     print("    Deleting leads from customers table\n")
     qry(cust_to_lead.strDeleteLeadsFromCustomers)
-
+    '''
     print("\nInserting new categories")
     qry(uom.strInsertNewCategories)
     print("Inserting new Units of Measure")
@@ -39,6 +47,7 @@ def init_sys(conn_string):
     print("Converting old to new Units of Measure")
     qry(uom.strUpdateUoM)
 
+    '''
     print("\nStandardizing Phone Numbers")
     print("Standardizing Customer Master Phone Numbers")
     tel.cleanPhoneNumbers("gss_V_CUSTOMER_MASTER","TELEPHONE")
@@ -51,7 +60,7 @@ def init_sys(conn_string):
     tel.cleanPhoneNumbers("gss_v_VEND_MSTR_ADDL","BUY_FAX")
     tel.cleanPhoneNumbers("gss_v_VEND_MSTR_ADDL","PAY_PHONE")
     tel.cleanPhoneNumbers("gss_v_VEND_MSTR_ADDL","PAY_FAX")
-
+    '''
 
 
     print("\nINITIALIZE COMPLETE\n")
