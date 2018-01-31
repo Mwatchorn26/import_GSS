@@ -31,28 +31,27 @@ def init_sys():
     qry(cust_to_lead.strDeleteTagsFromLeads)
     print("    Deleting leads from customers table\n")
     qry(cust_to_lead.strDeleteLeadsFromCustomers)
-    '''
     print("\nInserting new categories")
     qry(uom.strInsertNewCategories)
     print("Inserting new Units of Measure")
     qry(uom.strInsertNewUoM)
-    #print("Converting old to new Units of Measure")
-    #qry(uom.strUpdateUoM)
-
+    print("Converting old to new Units of Measure")
+    qry(uom.strUpdateUoM)
     '''
+    
     print("\nStandardizing Phone Numbers")
     print("Standardizing Customer Master Phone Numbers")
     tel.cleanPhoneNumbers("gss_V_CUSTOMER_MASTER","TELEPHONE")
     print("Standardizing Customer Master Phone Numbers")
-    tel.cleanPhoneNumbers("gss_v_EMPLOYEES","PHONE")
+    tel.cleanPhoneNumbers("gss_V_EMPLOYEES","PHONE")
     print("Standardizing Customer Master Phone Numbers")
     tel.cleanPhoneNumbers("gss_v_PROJECT_MASTER","PHONE")
     print("Standardizing Vendor Master ADDL Phone Numbers")
-    tel.cleanPhoneNumbers("gss_v_VEND_MSTR_ADDL","BUY_PHONE")
-    tel.cleanPhoneNumbers("gss_v_VEND_MSTR_ADDL","BUY_FAX")
-    tel.cleanPhoneNumbers("gss_v_VEND_MSTR_ADDL","PAY_PHONE")
-    tel.cleanPhoneNumbers("gss_v_VEND_MSTR_ADDL","PAY_FAX")
-    '''
+    tel.cleanPhoneNumbers("gss_V_VEND_MSTR_ADDL","BUY_PHONE")
+    tel.cleanPhoneNumbers("gss_V_VEND_MSTR_ADDL","BUY_FAX")
+    tel.cleanPhoneNumbers("gss_V_VEND_MSTR_ADDL","PAY_PHONE")
+    tel.cleanPhoneNumbers("gss_V_VEND_MSTR_ADDL","PAY_FAX")
+    
 
 
     print("\nINITIALIZE COMPLETE\n")

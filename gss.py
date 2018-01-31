@@ -7,7 +7,7 @@ import json
 import pudb
 import initialize
 import res_partner
-
+import mrp
 
 #conn_string=''
 
@@ -19,14 +19,9 @@ import res_partner
 #}
 
 def run():
-#    with open('config.json') as f:
-#        conf = json.load(f)
-#    #pudb.set_trace()
-#    global conn_string
-#    conn_string = "dbname={} user={} password={}".format(conf['database'], conf['user'], conf['passw'])
 
     #INITIALIZE SYSTEM
-    initialize.run_init.init_sys()
+#    initialize.run_init.init_sys()
 
     #SELECTION CRITERIA
 
@@ -43,6 +38,7 @@ def run():
     #ROUTERS
 
     #PRODUCTS
+    mrp.run_products.run_products()
 
     #BOM
 
