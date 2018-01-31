@@ -9,7 +9,7 @@ import initialize
 import res_partner
 
 
-conn_string=''
+#conn_string=''
 
 #Ensure you have this json in a file called config.json in the same directory (I only use databse, user and passw).
 #{
@@ -19,21 +19,21 @@ conn_string=''
 #}
 
 def run():
-    with open('config.json') as f:
-        conf = json.load(f)
-    #pudb.set_trace()
-    global conn_string
-    conn_string = "dbname={} user={} password={}".format(conf['database'], conf['user'], conf['passw'])
+#    with open('config.json') as f:
+#        conf = json.load(f)
+#    #pudb.set_trace()
+#    global conn_string
+#    conn_string = "dbname={} user={} password={}".format(conf['database'], conf['user'], conf['passw'])
 
     #INITIALIZE SYSTEM
-    initialize.run_init.init_sys(conn_string)
+    initialize.run_init.init_sys()
 
     #SELECTION CRITERIA
 
     #EMPLOYEE PARTNERS
 
     #CUSTOMER PARTNERS
-    #partners
+#    res_partners.run_res_partners
 
     #VENDOR PARTNERS
 #    res_partner.run_res_partner.run_res_partner(conn_string)

@@ -3,8 +3,6 @@ import psycopg2
 import time
 import json
 import pudb
-import initialize
-import res_partner
 
 conn_string=''
 
@@ -15,12 +13,15 @@ conn_string=''
 #  "passw": "user_password"
 #}
 
-def psyQuery(sqlQuery):
+def qry(sqlQuery):
 
     global conn_string
 
+    print("Next Query: " )
+    print(sqlQuery)
+
     if conn_string=='':
-        with open('config.json') as f:
+        with open('./config.json') as f:
             conf = json.load(f)
             conn_string = "dbname={} user={} password={}".format(conf['database'], conf['user'], conf['passw'])
 

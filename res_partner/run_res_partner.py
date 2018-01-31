@@ -3,12 +3,7 @@ import insert_vendor
 import pudb
 
 #from psyQuery import psyQuery as qry
-import os
-import sys
-p = os.path.abspath('../..')
-if p not in sys.path:
-    sys.path.append(p)
-from psyQuery import psyQuery as qry
+import psyQuery
 
 
 

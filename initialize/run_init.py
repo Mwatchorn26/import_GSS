@@ -1,22 +1,14 @@
 import cust_to_lead
 import uom
 import gss_tables
-#from psyQuery import psyQuery as qry
-import os
-import sys
-p = os.path.abspath('../..')
-if p not in sys.path:
-    sys.path.append(p)
-from psyQuery import psyQuery as qry
-
+import phonenumbers as tel
+from   psyQuery import qry
 from time import sleep
-import psycopg2
 import pudb
-import pandas as pd
 import sys
-import phoneNumbers as tel
+import pandas as pd
 
-def init_sys(conn_string):
+def init_sys():
     print("\n\nINITIALIZING SYSTEM")
     print("\nCreating GSS tables")
     '''
@@ -44,8 +36,8 @@ def init_sys(conn_string):
     qry(uom.strInsertNewCategories)
     print("Inserting new Units of Measure")
     qry(uom.strInsertNewUoM)
-    print("Converting old to new Units of Measure")
-    qry(uom.strUpdateUoM)
+    #print("Converting old to new Units of Measure")
+    #qry(uom.strUpdateUoM)
 
     '''
     print("\nStandardizing Phone Numbers")
@@ -66,23 +58,16 @@ def init_sys(conn_string):
     print("\nINITIALIZE COMPLETE\n")
 
 def gssDone(conn_string):
-    #conn_string = "dbname={} user={} password={}".format(conf['database'], conf['user'], conf['passw'])
+
+    conn_string=''
+
+    if conn_string=='':
+        with open('../config.json') as f:
+            conf = json.load(f)
+            conn_string = "dbname={} user={} password={}".format(conf['database'], conf['user'], conf['passw'])
 
     try:
-#        conn = psycopg2.connect(conn_string)
-
-        # create a cursor
-#        cur = conn.cursor()
-
-        # execute the create tables queries
-#        cur.execute(initialize.strInsertNewCategories)
         df = pd.read_sql('select * from "gss_migration_status" where "gss_done" is not null', con=psycopg2.connect(conn_string))
-
-        # close the communication with the PostgreSQL
-        cur.close()
-        conn.commit()
-        #for notice in conn.notices:
-        #    print(notice)
 
     except (Exception, psycopg2.DatabaseError) as error:
         print()
