@@ -1,1 +1,1 @@
-import run_products.py
+import run_products

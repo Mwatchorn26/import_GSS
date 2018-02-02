@@ -3,7 +3,6 @@ import pudb
 from  psyQuery import qry
 
 
-
 def run_products():
     print("\n\nUPDATING PRODUCTS")
     print("Inserting new vendors into res_partner")
@@ -20,9 +19,7 @@ def run_products():
     print("insert_product.insertTemplates")
     qry(insert_products.insertTemplates)
     print("insert_product.insertProductProduct")
-    qry(insert_products.insertProductProoduct")
-
-
+    qry(insert_products.insertProductProduct)
 
 
     print("\nPRODUCTS COMPLETE\n")

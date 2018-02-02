@@ -21,7 +21,7 @@ import mrp
 def run():
 
     #INITIALIZE SYSTEM
-#    initialize.run_init.init_sys()
+    initialize.run_init.init_sys()
 
     #SELECTION CRITERIA
 
@@ -36,9 +36,9 @@ def run():
     #PROJECTS
 
     #ROUTERS
-
+#    mrp.run_routes.run_routes()
     #PRODUCTS
-    mrp.run_products.run_products()
+#    mrp.run_products.run_products()
 
     #BOM
 

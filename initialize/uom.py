@@ -46,7 +46,7 @@ when "UM_INVENTORY" = 'ST' then 'Set'\n
 when "UM_INVENTORY" = 'DA' then 'Day(s)'\n
 when "UM_INVENTORY" = 'MM' then 'mm'\n
 when "UM_INVENTORY" = 'KG' then 'kg'\n
-else ''\n
+else 'Unit(s)'\n
 end;\n
 """
 
@@ -77,7 +77,7 @@ when "UM_PURCHASING" = 'ST' then 'Set'\n
 when "UM_PURCHASING" = 'DA' then 'Day(s)'\n
 when "UM_PURCHASING" = 'MM' then 'mm'\n
 when "UM_PURCHASING" = 'KG' then 'kg'\n
-else ''\n
+else 'Unit(s)'\n
 end;\n
 """
 
