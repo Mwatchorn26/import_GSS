@@ -24,7 +24,6 @@ strTrackLot = """  CASE WHEN FLAG_LOT='Y' THEN 'True'
 
 translateProductLine="""
 /* FIX PRODUCT LINE (aka categ_id) */
-update "gss_V_INVENTORY_MSTR"
 set "PRODUCT_LINE" = 
 case
 when trim("PRODUCT_LINE")='ZH' then 'Advertising & Promotion'
@@ -56,22 +55,23 @@ when trim("PRODUCT_LINE")='PC' then 'Pneumatic Components'
 when trim("PRODUCT_LINE")='ZD' then 'Quality Expenditures'
 when trim("PRODUCT_LINE")='ZN' then 'R&M Building'
 when trim("PRODUCT_LINE")='ZO' then 'R&M Equipment - On Demand'
-when trim"PRODUCT_LINE"='ZP' then 'R&M Equipment - Prevenative'
-when trim"PRODUCT_LINE"='RM' then 'Raw Material'
-when trim"PRODUCT_LINE"='ZQ' then 'Safety & Environmental Costs'
-when trim"PRODUCT_LINE"='ZR' then 'Shop Equipment >$500'
-when trim"PRODUCT_LINE"='ZE' then 'Shop Supplies'
-when trim"PRODUCT_LINE"='ZF' then 'Shop Tools <$500'
-when trim"PRODUCT_LINE"='SU' then 'Subcontractors'
-when trim"PRODUCT_LINE"='TA' then 'Tool Allowance'
-when trim"PRODUCT_LINE"='ZG' then 'Tooling'
-when trim"PRODUCT_LINE"='ZS' then 'Training & Seminars'
-when trim"PRODUCT_LINE"='ZT' then 'Waste Removal'
+when trim("PRODUCT_LINE")='ZP' then 'R&M Equipment - Prevenative'
+when trim("PRODUCT_LINE")='RM' then 'Raw Material'
+when trim("PRODUCT_LINE")='ZQ' then 'Safety & Environmental Costs'
+when trim("PRODUCT_LINE")='ZR' then 'Shop Equipment  >$500'
+when trim("PRODUCT_LINE")='ZE' then 'Shop Supplies'
+when trim("PRODUCT_LINE")='ZF' then 'Shop Tools  <$500'
+when trim("PRODUCT_LINE")='SU' then 'Subcontractors'
+when trim("PRODUCT_LINE")='TA' then 'Tool Allowance'
+when trim("PRODUCT_LINE")='ZG' then 'Tooling'
+when trim("PRODUCT_LINE")='ZS' then 'Training & Seminars'
+when trim("PRODUCT_LINE")='ZT' then 'Waste Removal'
 else 'Raw Material'
 end;
 """
 
-
+updateProductLineInvMstr="""update "gss_V_INVENTORY_MSTR" """ + translateProductLine
+updateProductLinePOLine="""update "gss_V_PO_LINES" """ + translateProductLine
 
 insertTemplates="""
 insert into product_template (warranty, list_price, write_uid, mes_type, uom_id,description_purchase, create_date, uos_coeff, create_uid, rental, company_id, uom_po_id, "type", description, write_date, active, categ_id, sale_ok, "name", description_sale, track_incoming, sale_delay, track_all, track_outgoing, purchase_ok, track_production, produce_delay, hr_expense_ok)
@@ -118,4 +118,71 @@ as name_template,
 true as active,
 (select id from product_template as pt where left(pt."name",12)= left(gss."PART",12) limit 1) as product_tmpl_id
 from "gss_V_INVENTORY_MSTR" as gss;
+"""
+
+
+
+insertPOLineProductTemplate="""
+insert into product_template (warranty, list_price, write_uid, mes_type, uom_id,description_purchase, create_date, uos_coeff, create_uid, rental, company_id, uom_po_id, "type", description, write_date, active, categ_id, sale_ok, "name", description_sale, track_incoming, sale_delay, track_all, track_outgoing, purchase_ok, track_production, produce_delay, hr_expense_ok)
+select distinct 0 as warranty,0.00 as list_price, 1 as write_uid, 'fixed' as mes_type, (select id from product_uom where "name"=gss."UM_INVENTORY") as uom_id,
+gss."DESCRIPTION" as description_purchase, clock_timestamp() as create_date, 1.0 as uos_coeff, 1 as create_uid, false as rental, 1 as company_id,
+(select id from product_uom where "name"=gss."UM_PURCHASING") as uom_po_id, 'product' as "type", gss."DESCRIPTION" as description,
+clock_timestamp() as write_date, true as active, (select id from product_category where "name"= gss."PRODUCT_LINE" limit 1) as categ_id, true as sale_ok,
+case when gss."PART" like '___-_____-__%' then left(gss."PART",12) else gss."PART" end  as "name",
+gss."DESCRIPTION" as description_sale,
+false as track_incoming, 0 as sale_delay, false as track_all, false as track_outgoing,
+(select case when gss."PART" like '___-_____-__%' then false else true end) as purchase_ok, false as track_production, 1 as produce_delay,
+(select case when upper(gss."PART") like 'EX:%'  then true else false end) as hr_expense_ok
+from "gss_V_PO_LINES" as gss
+where case when gss."PART" like '___-_____-__%' then
+                                concat(left(gss."PART",12),gss."DESCRIPTION")
+                        else
+                                concat(gss."PART",gss."DESCRIPTION")
+                        end not in (select concat("name",description_purchase) as "exists" from product_template)
+;
+"""
+
+
+insertPOLineProductProduct="""
+insert into product_product (create_uid, create_date,write_uid, default_code, write_date, name_template, active, product_tmpl_id)
+select 1 as create_uid, clock_timestamp() as create_date, 1 as write_uid,
+case when gss."PART" like '___-_____-__%' then
+                                case when length(gss."PART")>12 then
+                                                left(gss."PART",12) || ' (' || trim(right(gss."PART",3)) || ')'
+                                        else
+                                                left(gss."PART",12) end
+                        else
+                                gss."PART"
+                        end
+as default_code, clock_timestamp() as write_date,
+case when gss."PART" like '___-_____-__%' then
+                                left(gss."PART",12)
+                        else
+                                gss."PART"
+                        end
+as name_template,
+true as active,
+(select id from product_template as pt where left(pt."name",12)= left(gss."PART",12) limit 1) as product_tmpl_id
+from "gss_V_PO_LINES" as gss;
+"""
+
+insertProductAttibuteLines="""
+/* Associate all the templates like ___-_____-__ with attribute id 1 (aka Revision) */
+insert into product_attribute_line (create_uid, create_date, write_uid, product_tmpl_id, attribute_id, write_date)
+select 1 as create_uid, clock_timestamp() as create_date, 1 as write_uid, pt.id as product_tmpl_id, 1 as attribute_id, clock_timestamp() as write_date
+from product_template as pt where "name" like '___-_____-__%'
+and pt.id not in (select product_tmpl_id from product_attribute_line);"""
+
+insertProductAttributeValues="""
+insert into product_attribute_value (create_date, write_uid, write_date, create_uid, "name", attribute_id)
+select clock_timestamp() as create_date, 1 as write_uid, clock_timestamp() as write_date, 1 as create_uid, gs.rev as "name", 1 as attribute_id
+from (
+select distinct right(asdf."PART",asdf.LenFromEnd-1) as rev from (
+select gss."PART", 
+case when strpos(gss."PART",' ')>9 and length(gss."PART")>=18 then strpos(reverse(gss."PART"),' ') 
+     else '0' end as LenFromEnd
+from "gss_V_INVENTORY_MSTR" as gss
+) as asdf
+where LenFromEnd <= 4 and LenFromEnd>0 
+order by rev) as gs;
 """
