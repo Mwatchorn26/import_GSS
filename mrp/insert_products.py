@@ -184,5 +184,6 @@ case when strpos(gss."PART",' ')>9 and length(gss."PART")>=18 then strpos(revers
 from "gss_V_INVENTORY_MSTR" as gss
 ) as asdf
 where LenFromEnd <= 4 and LenFromEnd>0 
-order by rev) as gs;
+order by rev) as gs
+where gs.rev not in (select "name" from product_attribute_value);
 """
