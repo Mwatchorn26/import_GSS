@@ -28,17 +28,17 @@ def run():
     #EMPLOYEE PARTNERS
 
     #CUSTOMER PARTNERS
-#    res_partners.run_res_partners
+    res_partners.run_res_partners
 
     #VENDOR PARTNERS
-#    res_partner.run_res_partner.run_res_partner(conn_string)
+    res_partner.run_res_partner.run_res_partner(conn_string)
 
     #PROJECTS
 
     #ROUTERS
-#    mrp.run_routes.run_routes()
+    mrp.run_routes.run_routes()
     #PRODUCTS
-#    mrp.run_products.run_products()
+    mrp.run_products.run_products()
 
     #BOM
 

@@ -187,3 +187,29 @@ where LenFromEnd <= 4 and LenFromEnd>0
 order by rev) as gs
 where gs.rev not in (select "name" from product_attribute_value);
 """
+
+insertProdAttValProdProdRel="""
+/*obbiously as there's no "INSERT INTO" this is incomplete. */
+
+select (select id from product_attribute_value as pav where ddd."rev_name" =  pav."name") as att_id,
+(select "default_code" from product_product as pp where pp."default_code" = orig_part limit 1) as prod_id
+,(select "default_code" from product_product as pp where orig_part = pp."default_code" limit 1) as sorta_prod_id
+,prod_template, "rev_name", orig_part
+from(
+	select gs.prod_template, gs.rev as "rev_name", "PART" as orig_part
+	from (
+		select distinct trim(left(asdf."PART",length(asdf."PART") - asdf.LenFromEnd-1)) as prod_template, 
+		right(asdf."PART",asdf.LenFromEnd-1) as rev,
+		asdf."PART" 
+		from (
+			select gss."PART", 
+			case when strpos(gss."PART",' ')>9 and length(gss."PART")>=18 then strpos(reverse(gss."PART"),' ') 
+		     	else '0' end as LenFromEnd
+			from "gss_V_INVENTORY_MSTR" as gss
+		) as asdf
+		where LenFromEnd <= 4 and LenFromEnd>0 
+		order by rev) as gs
+	) as ddd
+;
+"""
+
