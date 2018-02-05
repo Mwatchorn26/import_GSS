@@ -11,7 +11,7 @@ import pandas as pd
 def init_sys():
     print("\n\nINITIALIZING SYSTEM")
     print("\nCreating GSS tables")
-    '''
+    
     qry(gss_tables.create_gss_tables)
 
     #wait for data to be copied over to the new tables...
@@ -35,11 +35,10 @@ def init_sys():
     qry(uom.strInsertNewCategories)
     print("Inserting new Units of Measure")
     qry(uom.strInsertNewUoM)
-    '''
+    
     print("Converting old to new Units of Measure")
     qry(uom.strUpdateUoM)
     
-    '''
     print("\nStandardizing Phone Numbers")
     print("Standardizing Customer Master Phone Numbers")
     tel.cleanPhoneNumbers("gss_V_CUSTOMER_MASTER","TELEPHONE")
@@ -52,8 +51,6 @@ def init_sys():
     tel.cleanPhoneNumbers("gss_V_VEND_MSTR_ADDL","BUY_FAX")
     tel.cleanPhoneNumbers("gss_V_VEND_MSTR_ADDL","PAY_PHONE")
     tel.cleanPhoneNumbers("gss_V_VEND_MSTR_ADDL","PAY_FAX")
-    '''    
-
 
     print("\nINITIALIZE COMPLETE\n")
 
