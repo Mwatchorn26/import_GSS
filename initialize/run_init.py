@@ -2,7 +2,7 @@ import cust_to_lead
 import uom
 import gss_tables
 import phonenumbers as tel
-from   psyQuery import qry
+from psyQuery import qry
 from time import sleep
 import pudb
 import sys
@@ -25,7 +25,7 @@ def init_sys():
     print("\nMoving customers to leads")
     print("    Inserting Into Leads")
     qry(cust_to_lead.strInsertIntoLeads)
-    print("    Copying over tags"
+    print("    Copying over tags")
     qry(cust_to_lead.strCopyOverTags)
     print("    Deleting tags from customers")
     qry(cust_to_lead.strDeleteTagsFromLeads)
@@ -54,7 +54,7 @@ def init_sys():
 
     print("\nINITIALIZE COMPLETE\n")
 
-def gssDone(conn_string):
+def gssDone():
 
     conn_string=''
 

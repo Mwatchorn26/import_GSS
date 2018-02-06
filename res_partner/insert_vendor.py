@@ -73,7 +73,7 @@ query_VENDOR_MASTER = """SELECT * INTO res_partner
                            end AS "FAX"
                          FROM "gss_V_VEND_MSTR_ADDL"
                        ) AS "ADL3" ON ("ADL3"."VENDOR" = "MSTR"."VENDOR"))
-                 WHERE "MSTR"."VENDOR" <> '');
+                 WHERE "MSTR"."VENDOR" <> '') as outer;
 
 """
 
