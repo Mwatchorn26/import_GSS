@@ -77,5 +77,5 @@ def gssDone():
     #        psycopg2.close()
     #        print('Database connection closed.')
 
-    print(bool(df.empty))
+    #print(bool(df.empty))
     return not bool(df.empty)
