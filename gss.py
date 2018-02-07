@@ -22,7 +22,7 @@ def run():
 
     #INITIALIZE SYSTEM
     initialize.run_init.init_sys()
-
+    return
     #SELECTION CRITERIA
 
     #EMPLOYEE PARTNERS

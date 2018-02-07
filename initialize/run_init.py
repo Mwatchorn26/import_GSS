@@ -7,19 +7,22 @@ from time import sleep
 import pudb
 import sys
 import pandas as pd
+import psycopg2
+import time
+import json
 
 def init_sys():
     print("\n\nINITIALIZING SYSTEM")
     print("\nCreating GSS tables")
     
     qry(gss_tables.create_gss_tables)
-
+    
     #wait for data to be copied over to the new tables...
     print("\n\nWAITING FOR GLOBALSHOP DATA TO BE COPIED OVER.\n.")
     while not gssDone():
         sleep(10)
         sys.stdout.write(".")
-
+    return
     print("\nMoving customers to leads")
     print("    Inserting Into Leads")
     qry(cust_to_lead.strInsertIntoLeads)
@@ -57,7 +60,7 @@ def gssDone():
     conn_string=''
 
     if conn_string=='':
-        with open('../config.json') as f:
+        with open('config.json') as f:
             conf = json.load(f)
             conn_string = "dbname={} user={} password={}".format(conf['database'], conf['user'], conf['passw'])
 
@@ -69,9 +72,10 @@ def gssDone():
         print("ERROR")
         print(error)
         print()
-    finally:
-        if conn is not None:
-            conn.close()
-            print('Database connection closed.')
+    #finally:
+    #    if psycopg2 is not None:
+    #        psycopg2.close()
+    #        print('Database connection closed.')
 
-    return df.empty
+    print(bool(df.empty))
+    return not bool(df.empty)
