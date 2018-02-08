@@ -68,7 +68,7 @@ CREATE TABLE public."gss_V_BOM_TEXT" (
 	"PARENT_INS" int4 NULL,
 	"BOM_SEQ" text NULL,
 	"PART" text NULL,
-	"TEXT" text NULL
+	"TEXT_MEMO" text NULL
 )
 WITH (
 	OIDS=FALSE
