@@ -493,7 +493,7 @@ CREATE TABLE public."gss_V_ORDER_LINES" (
 	"RECORD_TYPE" text NULL,
 	"CUSTOMER" text NULL,
 	"LINE_TYPE" text NULL,
-	"QTY_ORDER" float8 NULL,
+	"QTY_ORDERED" float8 NULL,
 	"QTY_SHIPPED" float8 NULL,
 	"QTY_BO" float8 NULL,
 	"WEIGHT" float8 NULL,
@@ -561,7 +561,7 @@ CREATE TABLE public."gss_V_ORDER_TEXT" (
 	"FLAG_INVOICE" text NULL,
 	"FLAG_QUOTE" text NULL,
 	"TEXT_SEQ" text NULL,
-	"TEXT" text NULL,
+	"TEXT_MEMO" text NULL,
 	"TEXT_TYPE" text NULL
 )
 WITH (
@@ -630,7 +630,7 @@ CREATE TABLE public."gss_V_PO_LINES" (
 	"FLAG_RECV_CLOSE" text NULL,
 	"SUFFIX" text NULL,
 	"PART_MFG_NO" text NULL,
-	"MGF_NAME" text NULL,
+	"MFG_NAME" text NULL,
 	"QTY_ALT_ORDER" float8 NULL,
 	"UM_INVENTORY" text NULL,
 	"VENDOR" text NULL,
@@ -693,7 +693,7 @@ CREATE TABLE public."gss_V_PO_TEXT" (
 	"PO_LINE" text NULL,
 	"FLAG_PO" text NULL,
 	"POTXT_SEQ" text NULL,
-	"TEXT" text NULL
+	"TEXT_MEMO" text NULL
 )
 WITH (
 	OIDS=FALSE
@@ -902,7 +902,7 @@ CREATE TABLE public."gss_V_QUOTE_NOTES" (
 	"QUOTE_NO" text NULL,
 	"QUOTE_LINE" text NULL,
 	"NOTES_SEQ" text NULL,
-	"TEXT" text NULL
+	"TEXT_MEMO" text NULL
 )
 WITH (
 	OIDS=FALSE
@@ -916,7 +916,7 @@ CREATE TABLE public."gss_V_QUOTE_TEXT" (
 	"FLAG_INVOICE" text NULL,
 	"FLAG_QUOTE" text NULL,
 	"TEXT_SEQ" text NULL,
-	"TEXT" text NULL,
+	"TEXT_MEMO" text NULL,
 	"TEXT_TYPE" text NULL
 )
 WITH (
@@ -1043,7 +1043,7 @@ WITH (
 
 
 CREATE TABLE public."gss_V_VENDOR_CURR" (
-	"CURRENCY" text NULL,
+	"CURRENCY_TEXT" text NULL,
 	"VENDOR" text NULL
 )
 WITH (
