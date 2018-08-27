@@ -23,8 +23,9 @@ strTrackLot = """  CASE WHEN FLAG_LOT='Y' THEN 'True'
                    ELSE 'False' as TRACK_OUTGOING,"""
 
 
-createWorcentersResourcesTemplatesProducts="""
-create temporary table "temp_gss_parts"(id serial primary key, "prod_template" text not NULL, rev_name text null, "orig_part" text not null);
+#createWorcentersResourcesTemplatesProducts="""
+createTempGssParts="""
+create table "temp_gss_parts"(id serial primary key, "prod_template" text not NULL, rev_name text null, "orig_part" text not null);
 
 /* GSS PARTS WITH NO REVISION NUMBER */
 insert into "temp_gss_parts" ("prod_template", "rev_name", "orig_part")
@@ -88,21 +89,25 @@ from(
 where prod_template not in (select prod_template from "temp_gss_parts")
 order by prod_template
 ;
+"""
 
+insertResoucesFromWorkCenter="""
 /*CREATE WORK CENTER RESOURCES*/
 insert into resource_resource (create_uid, time_efficiency , "name", company_id, write_uid , create_date, write_date, active, resource_type)
 select 1 as create_uid, 1 as time_efficiency, gss."MACHINE" as "name", 1 as company_id, 1 as write_uid, clock_timestamp() as create_date, clock_timestamp() as write_date, true as active, 'material' as resource_type
 from "gss_V_WORKCENTERS" as gss
-where gss."MACHINE" not in (select "name" from resource_resource where resource_type='material');
+where gss."MACHINE" not in (select "name" from resource_resource where resource_type='material');"""
 
 
+insertWorkCenterFromWorkCenters="""
 /*CREATE MRP WORKCENTERS BASED ON MATERIAL RESOURCES*/
 insert into mrp_workcenter (create_uid, capacity_per_cycle, time_start, resource_id, time_stop, note, costs_hour, costs_cycle, write_date, create_date, write_uid, time_cycle)
 select 1 as create_uid, 1 as capacity_per_cycle, 0 as time_start, rr.id as resource_id, 0 as time_stop, gss."MACHINE" || ' ' || gss."WC_NAME" as note, cast(gss."STANDARD_COST" as float) as costs_hour, 0 as costs_cycle, clock_timestamp() as write_date, clock_timestamp() as create_date, 1 as write_uid, 0 as time_cycle
 from "gss_V_WORKCENTERS" as gss
 left join resource_resource as rr on rr.resource_type='material' and gss."MACHINE"=rr."name"
-where rr.id not in (select resource_id from mrp_workcenter);
+where rr.id not in (select resource_id from mrp_workcenter);"""
 
+insertMissingResourses="""
 /*ADD MISSING RESOURCES */
 insert into resource_resource (create_uid, time_efficiency, "name", company_id, write_uid, create_date, write_date, active, resource_type)
 values  (1 , 1 , 'SL-G', 1 , 1 , clock_timestamp() , clock_timestamp() , true , 'material' ),
@@ -120,9 +125,7 @@ values  (1 , 1 , 'SL-G', 1 , 1 , clock_timestamp() , clock_timestamp() , true , 
         (1 , 1 , 'ELE1', 1 , 1 , clock_timestamp() , clock_timestamp() , false , 'material' ),
         (1 , 1 , 'DES2', 1 , 1 , clock_timestamp() , clock_timestamp() , false, 'material' ),
         (1 , 1 , 'MACH', 1 , 1 , clock_timestamp() , clock_timestamp() , false, 'material' ),
-        (1 , 1 , 'SLCM', 1 , 1 , clock_timestamp() , clock_timestamp() , false, 'material' )
-
-                
+        (1 , 1 , 'SLCM', 1 , 1 , clock_timestamp() , clock_timestamp() , false, 'material' );                
                 
 /* ADD MISSING MRP WORKCENTERS BASED ON MISSING RESOURCES*/
 insert into mrp_workcenter (create_uid, capacity_per_cycle, time_start, resource_id, time_stop, note, costs_hour, costs_cycle, write_date, create_date, write_uid, time_cycle)
@@ -137,9 +140,15 @@ values  (1, 1, 0, (select id from resource_resource where "name"='SL-G'), 0 , 'S
         (1, 1, 0, (select id from resource_resource where "name"='RE02'), 0 , 'RE02', 50.0 , 0 , clock_timestamp() , clock_timestamp() , 1 , 0 ),
         (1, 1, 0, (select id from resource_resource where "name"='ASSE'), 0 , 'ASSE' || ' ' || 'Assembly' , 50.0 , 0 , clock_timestamp() , clock_timestamp() , 1 , 0 ),
         (1, 1, 0, (select id from resource_resource where "name"='ELE2'), 0 , 'ELE2' , 50.0 , 0 , clock_timestamp() , clock_timestamp() , 1 , 0 ),
+        (1, 1, 0, (select id from resource_resource where "name"='GR-G'), 0 , 'GR-G' || ' ' || 'Grinder Group' , 50.0 , 0 , clock_timestamp() , clock_timestamp() , 1 , 0 ),
+        (1, 1, 0, (select id from resource_resource where "name"='ELE1'), 0 , 'ELE1', 50.0 , 0 , clock_timestamp() , clock_timestamp() , 1 , 0 ),
+        (1, 1, 0, (select id from resource_resource where "name"='DES2'), 0 , 'DES2' , 50.0 , 0 , clock_timestamp() , clock_timestamp() , 1 , 0 ),
+        (1, 1, 0, (select id from resource_resource where "name"='MACH'), 0 , 'MACH' , 50.0 , 0 , clock_timestamp() , clock_timestamp() , 1 , 0 ),
+        (1, 1, 0, (select id from resource_resource where "name"='SLCM'), 0 , 'SLCM' , 50.0 , 0 , clock_timestamp() , clock_timestamp() , 1 , 0 )
+;
+"""
 
-
-
+updateProductLines="""
 /* FIX PRODUCT LINE (aka categ_id) */
 update "gss_V_INVENTORY_MSTR" 
 set "PRODUCT_LINE" = 
@@ -187,8 +196,6 @@ when trim("PRODUCT_LINE")='ZT' then 'Waste Removal'
 else 'Raw Material'
 end;
 
-
-
 /* FIX PRODUCT LINE (aka categ_id) */
 update "gss_V_PO_LINES" 
 set "PRODUCT_LINE" = 
@@ -235,7 +242,9 @@ when trim("PRODUCT_LINE")='ZS' then 'Training & Seminars'
 when trim("PRODUCT_LINE")='ZT' then 'Waste Removal'
 else 'Raw Material'
 end;
+"""
 
+insertProductTemplates="""
 /* Insert Product Templates */
 insert into product_template (warranty, list_price, write_uid, mes_type, uom_id,description_purchase, create_date, uos_coeff, create_uid, rental, company_id, uom_po_id, "type", description, write_date, active, categ_id, sale_ok, "name", description_sale, track_incoming, sale_delay, track_all, track_outgoing, purchase_ok, track_production, produce_delay, hr_expense_ok)
 select distinct 0 as warranty,0.00 as list_price, 1 as write_uid, 'fixed' as mes_type, (select id from product_uom where "name"=im."UM_INVENTORY") as uom_id,
@@ -250,8 +259,9 @@ false as track_incoming, 0 as sale_delay, false as track_all, false as track_out
 from "gss_V_INVENTORY_MSTR" as im
 left join "temp_gss_parts" as tgp on tgp."orig_part" = im."PART"
 where tgp."prod_template" not in (select concat("name",description_purchase) as "exists" from product_template)
-;
+;"""
 
+insertProductProduct="""
 /* INSERT PRODUCT PRODUCT */
 insert into product_product (create_uid, create_date,write_uid, default_code, write_date, name_template, active, product_tmpl_id)
 select 1 as create_uid, clock_timestamp() as create_date, 1 as write_uid,
@@ -267,11 +277,9 @@ pt."id" as product_tmpl_id
 from "gss_V_INVENTORY_MSTR" as gss
 left join "temp_gss_parts" as tgp on tgp."orig_part" = gss."PART"
 left join product_template as pt on pt."name" = tgp."prod_template"
-;
+;"""
 
-
-
-
+insertPOLineProductTemplate="""
 /* INSERT PO LINE PRODUCT TEMPLATE */
 insert into product_template (warranty, list_price, write_uid, mes_type, uom_id,description_purchase, create_date, uos_coeff, create_uid, rental, company_id, uom_po_id, "type", description, write_date, active, categ_id, sale_ok, "name", description_sale, track_incoming, sale_delay, track_all, track_outgoing, purchase_ok, track_production, produce_delay, hr_expense_ok)
 select distinct 0 as warranty,0.00 as list_price, 1 as write_uid, 'fixed' as mes_type, (select id from product_uom where "name"=gss."UM_INVENTORY") as uom_id,
@@ -289,7 +297,6 @@ where tgp."prod_template" not in (select "name" as "exists" from product_templat
 order by gss."DATE_DUE_LINE" desc
 ;
 """
-
 
 insertPOLineProductProduct="""
 insert into product_product (create_uid, create_date,write_uid, default_code, write_date, name_template, active, product_tmpl_id)

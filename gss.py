@@ -19,25 +19,23 @@ import mrp
 #}
 
 def run():
-
+    pudb.set_trace()
     #INITIALIZE SYSTEM
     initialize.run_init.init_sys()
-    return
+    
     #SELECTION CRITERIA
 
     #EMPLOYEE PARTNERS
 
     #CUSTOMER PARTNERS
-    res_partner.run_res_partner
+    #res_partner.run_res_partner
 
     #VENDOR PARTNERS
     res_partner.run_res_partner.run_res_partner()
 
     #PROJECTS
 
-    #ROUTERS
-    mrp.run_routers.run_routers()
-    #PRODUCTS
+    #MRP
     mrp.run_products.run_products()
 
     #BOM

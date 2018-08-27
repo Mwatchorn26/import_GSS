@@ -8,8 +8,11 @@ def run_routers():
     print("\n\nUPDATING ROUTES")
     print("Inserting new routes into mrp_routing")
 
+    print("insert_products.createTempPartsTable")
+    qry(insert_products.createTempPartsTable)
+
     print("routes.insertRoutes")
-    qry(routers.insertRoutes)
+    qry(insert_routers.insertRoutes)
 
 
     print("\nROUTES COMPLETE\n")

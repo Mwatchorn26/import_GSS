@@ -12,17 +12,17 @@ import time
 import json
 
 def init_sys():
-    print("\n\nINITIALIZING SYSTEM")
-    print("\nCreating GSS tables")
+    #print("\n\nINITIALIZING SYSTEM")
+    #print("\nCreating GSS tables")
+    # 
+    #qry(gss_tables.create_gss_tables)
+    #
+    ##wait for data to be copied over to the new tables...
+    #print("\n\nWAITING FOR GLOBALSHOP DATA TO BE COPIED OVER.\n.")
+    #while not gssDone():
+    #    sleep(10)
+    #    sys.stdout.write(".")
     
-    qry(gss_tables.create_gss_tables)
-    
-    #wait for data to be copied over to the new tables...
-    print("\n\nWAITING FOR GLOBALSHOP DATA TO BE COPIED OVER.\n.")
-    while not gssDone():
-        sleep(10)
-        sys.stdout.write(".")
-    return
     print("\nMoving customers to leads")
     print("    Inserting Into Leads")
     qry(cust_to_lead.strInsertIntoLeads)
