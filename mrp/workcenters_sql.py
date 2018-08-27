@@ -1,3 +1,4 @@
+
 insertWCs="""
 /*CREATE WORK CENTER RESOURCES*/
 insert into resource_resource (create_uid , 	 time_efficiency , "name"                , 		company_id, 	 write_uid , create_date         			, 	write_date          		 , active		 , resource_type)

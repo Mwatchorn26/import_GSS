@@ -21,6 +21,7 @@ import mrp
 def run():
     pudb.set_trace()
     #INITIALIZE SYSTEM
+    # folder  . file   . function
     initialize.run_init.init_sys()
     
     #SELECTION CRITERIA
@@ -34,9 +35,11 @@ def run():
     res_partner.run_res_partner.run_res_partner()
 
     #PROJECTS
+    #projects.run_projects.load()
 
     #MRP
-    mrp.run_products.run_products()
+    #folder . file . function
+    mrp.load_mrp.load()
 
     #BOM
 

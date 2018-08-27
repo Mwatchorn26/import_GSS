@@ -1,1 +1,1 @@
-import run_res_partner
+import load_partners

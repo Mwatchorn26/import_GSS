@@ -13,7 +13,9 @@ def run_res_partner():
 
     print(insert_vendor.query_VENDOR_MASTER)
 #    pudb.set_trace()
-    qry(insert_vendor.query_VENDOR_MASTER)
+    qry(partners_sql.insertSuppliers)
+    qry(partners_sql.insertCustomers)
+
 
     print("\nRES_PARTNER COMPLETE\n")
 

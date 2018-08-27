@@ -1,4 +1,56 @@
 
+translateProductLine="""
+/* FIX PRODUCT LINE (aka categ_id) */
+set "PRODUCT_LINE" = 
+case
+when trim("PRODUCT_LINE")='ZH' then 'Advertising & Promotion'
+when trim("PRODUCT_LINE")='AA' then 'Automated Assembly'
+when trim("PRODUCT_LINE")='BI' then 'Bin Inventory'
+when trim("PRODUCT_LINE")='BP' then 'Build To Print'
+when trim("PRODUCT_LINE")='ZI' then 'Computer Equipment'
+when trim("PRODUCT_LINE")='ZJ' then 'Computer Licenses'
+when trim("PRODUCT_LINE")='ZK' then 'Computer Software'
+when trim("PRODUCT_LINE")='ZA' then 'Consumables'
+when trim("PRODUCT_LINE")='CM' then 'Contract Manufacturing'
+when trim("PRODUCT_LINE")='CR' then 'Contract Repair'
+when trim("PRODUCT_LINE")='EC' then 'Electrical Components'
+when trim("PRODUCT_LINE")='ES' then 'Engineering Services'
+when trim("PRODUCT_LINE")='EQ' then 'Equipment Rental'
+when trim("PRODUCT_LINE")='FB' then 'Freight & Brokerage'
+when trim("PRODUCT_LINE")='HC' then 'Hydraulic Components'
+when trim("PRODUCT_LINE")='ZL' then 'Indirect Labour Accounts'
+when trim("PRODUCT_LINE")='IN' then 'Innovations'
+when trim("PRODUCT_LINE")='LS' then 'Lab Services'
+when trim("PRODUCT_LINE")='ZC' then 'Laboratory Expenses'
+when trim("PRODUCT_LINE")='MP' then 'Machined Parts'
+when trim("PRODUCT_LINE")='MC' then 'Mechanical Components'
+when trim("PRODUCT_LINE")='SP' then 'OEM Spare Parts (why non-Inv?)'
+when trim("PRODUCT_LINE")='ZM' then 'Office Supplies'
+when trim("PRODUCT_LINE")='SD' then 'Payroll Deduction'
+when trim("PRODUCT_LINE")='PI' then 'Platform Inventory'
+when trim("PRODUCT_LINE")='PC' then 'Pneumatic Components'
+when trim("PRODUCT_LINE")='ZD' then 'Quality Expenditures'
+when trim("PRODUCT_LINE")='ZN' then 'R&M Building'
+when trim("PRODUCT_LINE")='ZO' then 'R&M Equipment - On Demand'
+when trim("PRODUCT_LINE")='ZP' then 'R&M Equipment - Prevenative'
+when trim("PRODUCT_LINE")='RM' then 'Raw Material'
+when trim("PRODUCT_LINE")='ZQ' then 'Safety & Environmental Costs'
+when trim("PRODUCT_LINE")='ZR' then 'Shop Equipment  >$500'
+when trim("PRODUCT_LINE")='ZE' then 'Shop Supplies'
+when trim("PRODUCT_LINE")='ZF' then 'Shop Tools  <$500'
+when trim("PRODUCT_LINE")='SU' then 'Subcontractors'
+when trim("PRODUCT_LINE")='TA' then 'Tool Allowance'
+when trim("PRODUCT_LINE")='ZG' then 'Tooling'
+when trim("PRODUCT_LINE")='ZS' then 'Training & Seminars'
+when trim("PRODUCT_LINE")='ZT' then 'Waste Removal'
+else 'Raw Material'
+end;
+"""
+
+updateProductLineInvMstr="""update "gss_V_INVENTORY_MSTR" """ + translateProductLine
+updateProductLinePOLine="""update "gss_V_PO_LINES" """ + translateProductLine
+
+
 
 #Prepare PROCURE_METHOD AND SUPPLY_METHOD
 translatePJFM = """UPDATE gss_V_INVENTORY_MASTER ("PROCURE_METHOD", "SUPPLY_METHOD")

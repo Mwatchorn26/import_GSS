@@ -37,7 +37,7 @@
 
 
 
-query_VENDOR_MASTER = """SELECT * INTO res_partner 
+insertSuppliers = """SELECT * INTO res_partner 
                  FROM(SELECT TRIM("MSTR"."VENDOR") AS "EXTERNAL_ID", TRIM("NAME_VENDOR") AS "NAME", TRIM("ADDRESS1") AS "STREET", TRIM("ADDRESS2") AS "STREET2", TRIM("MSTR"."CITY") AS "CITY", TRIM("MSTR"."STATE") AS "STATE", TRIM("CODE_ZIP") AS "ZIP", INITCAP(TRIM("MSTR"."COUNTRY")) AS "COUNTRY",
                  case when TRIM("ATTENTION")='' then ''
                       else concat('ATTENTION: ' , TRIM("ATTENTION")) 

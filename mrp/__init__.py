@@ -1,2 +1,1 @@
-import run_products
-import run_routers
+import load_mrp
