@@ -22,24 +22,21 @@ def run():
     pudb.set_trace()
     #INITIALIZE SYSTEM
     # folder  . file   . function
-    initialize.run_init.init_sys()
+    #initialize.run_init.init_sys()
     
     #SELECTION CRITERIA
 
     #EMPLOYEE PARTNERS
 
-    #CUSTOMER PARTNERS
-    #res_partner.run_res_partner
-
-    #VENDOR PARTNERS
-    res_partner.run_res_partner.run_res_partner()
+    #SUPPLIERS & CUSTOMERS (RES_PARTNERS)
+    # TESTED GOOD:   res_partner.load_partners.load()
 
     #PROJECTS
-    #projects.run_projects.load()
+    projects.load_projects.load()
 
     #MRP
     #folder . file . function
-    mrp.load_mrp.load()
+    #mrp.load_mrp.load()
 
     #BOM
 

@@ -1,50 +1,31 @@
-#subQuery_VENDOR_PHONE = """ ( SELECT VEND_NO AS VENDOR,
-#                       IIF(BUY_PHONE=PAY_PHONE,
-#                            IIF(LEN(TRIM(PAY_PHONE))=10,
-#                                  MID(PAY_PHONE,1,3) & '-' &  MID(PAY_PHONE,4,3)  & '-' &  MID(PAY_PHONE,7,4),
-#                                 PAY_PHONE),
-#                            IIF(LEN(TRIM(PAY_PHONE))=10,
-#                                 'BUY: ' & MID(BUY_PHONE,1,3) & '-' &  MID(BUY_PHONE,4,3)  & '-' &  MID(BUY_PHONE,7,4)   & '    PAYMENTS: ' & MID(PAY_PHONE,1,3) & '-' &  MID(PAY_PHONE,4,3)  & '-' &  MID(PAY_PHONE,7,4),
-#                                 'BUY: ' & BUY_PHONE & '    PAYMENTS: ' & PAY_PHONE)
-#                           ) AS PHONE 
-#                         FROM gss_V_VEND_MSTR_ADDL 
-#                       )"""
-#                
-#subQuery_VENDOR_FAX = """ ( SELECT VEND_NO AS VENDOR,
-#                       IIF(BUY_FAX=PAY_FAX,
-#                            IIF(LEN(TRIM(PAY_FAX))=10,
-#                                  MID(PAY_FAX,1,3) & '-' &  MID(PAY_FAX,4,3)  & '-' &  MID(PAY_FAX,7,4),
-#                                 PAY_FAX)," & vbCrLf & _
-#                            IIF(LEN(TRIM(PAY_FAX))=10,
-#                                 'BUY: ' & MID(BUY_FAX,1,3) & '-' &  MID(BUY_FAX,4,3)  & '-' &  MID(BUY_FAX,7,4)   & '    PAYMENTS: ' & MID(PAY_FAX,1,3) & '-' &  MID(PAY_FAX,4,3)  & '-' &  MID(PAY_FAX,7,4),
-#                                 'BUY: ' & BUY_FAX & '    PAYMENTS: ' & PAY_FAX)
-#                           ) AS FAX 
-#                         FROM gss_V_VEND_MSTR_ADDL 
-#                       )"""
-#    
-#    
-#query_VENDOR_MASTER = """SELECT * INTO res_partner 
-#                 FROM( SELECT TRIM(MSTR.VENDOR) AS EXTERNAL_ID, TRIM(NAME_VENDOR) AS NAME, TRIM(ADDRESS1) AS STREET, TRIM(ADDRESS2) AS STREET2, TRIM(MSTR.CITY) AS CITY, TRIM(MSTR.STATE) AS STATE, TRIM(CODE_ZIP) AS ZIP, strconv(TRIM(MSTR.COUNTRY),3) AS COUNTRY, 
-#                 IIF( ATTENTION='','','ATTENTION: ' & ATTENTION ) AS COMMENT, 'TRUE' AS IS_COMPANY , 'TRUE' AS SUPPLIER, 'TRUE' AS ACTIVE, 
-#                 TRIM(ADL1.EMAIL) AS EMAIL, 
-#                 TRIM(ADL2.PHONE) AS PHONE, 
-#                 TRIM(ADL3.FAX) AS FAX 
-#                 FROM (((gss_V_VENDOR_MASTER AS MSTR
-#                 LEFT JOIN gss_V_VENDOR_ADDL AS ADL1 ON (ADL1.VENDOR = MSTR.VENDOR))
-#                 LEFT JOIN """ + subQuery_VENDOR_PHONE + """ AS ADL2 ON (ADL2.VENDOR = MSTR.VENDOR))
-#                 LEFT JOIN """ + subQuery_VENDOR_FAX + """ AS ADL3 ON (ADL3.VENDOR = MSTR.VENDOR))
-#                 WHERE MSTR.VENDOR <> '');"""
-
-
-
-insertSuppliers = """SELECT * INTO res_partner 
-                 FROM(SELECT TRIM("MSTR"."VENDOR") AS "EXTERNAL_ID", TRIM("NAME_VENDOR") AS "NAME", TRIM("ADDRESS1") AS "STREET", TRIM("ADDRESS2") AS "STREET2", TRIM("MSTR"."CITY") AS "CITY", TRIM("MSTR"."STATE") AS "STATE", TRIM("CODE_ZIP") AS "ZIP", INITCAP(TRIM("MSTR"."COUNTRY")) AS "COUNTRY",
+insertSuppliers = """insert INTO res_partner ("name", "street", "street2", "city", "state_id","zip","country_id",
+						"comment", "is_company", "supplier", "active","email","phone","fax","company_id","notify_email"
+,"create_date","color","use_parent_address","employee","type","lang","create_uid","write_date","write_uid","display_name","customer","opt_out","vat_subjected"
+) 
+                 SELECT TRIM("NAME_VENDOR") AS "NAME", TRIM("ADDRESS1") AS "STREET", TRIM("ADDRESS2") AS "STREET2", TRIM("MSTR"."CITY") AS "CITY", 
+		(select id from res_country_state as rcs where (rcs.code = TRIM("MSTR"."STATE")) limit 1) AS "STATE_id", TRIM("CODE_ZIP") AS "ZIP", 
+		(select id from res_country as rc where (rc."name" = INITCAP(TRIM("MSTR"."COUNTRY"))) limit 1) AS "country_id",
                  case when TRIM("ATTENTION")='' then ''
                       else concat('ATTENTION: ' , TRIM("ATTENTION")) 
                  end AS COMMENT, 'TRUE' AS "IS_COMPANY" , 'TRUE' AS "SUPPLIER", 'TRUE' AS "ACTIVE",
                  TRIM("ADL1"."EMAIL") AS "EMAIL",
                  TRIM("ADL2"."PHONE") AS "PHONE",
-                 TRIM("ADL3"."FAX") AS "FAX"
+                 TRIM("ADL3"."FAX") AS "FAX",
+		 '1' as "company_id",
+		 'always' as "notify_email",
+		now() as "create_date", 
+		0 as "color", 
+		'false' as "use_parent_address",
+		'false' as "employee", 'contact' as "type", 'en_US' as "lang", '1' as "create_uid", 
+		now() as  "write_date", '1' as write_uid, trim("NAME_VENDOR") as "display_name", 
+		'false' as "customer", 'false' as "opt_out", 
+		case when INITCAP("MSTR"."COUNTRY")='France' then true
+                	 when INITCAP("MSTR"."COUNTRY")='Ireland' then true
+                	 when INITCAP("MSTR"."COUNTRY")='Germany' then true
+                	 when INITCAP("MSTR"."COUNTRY")='Italy' then true
+                	 when INITCAP("MSTR"."COUNTRY")='Netherlands' then true
+                else false  end as "vat_subjected"
+
                  FROM ((("gss_V_VENDOR_MASTER" AS "MSTR"
                  LEFT JOIN "gss_V_VENDOR_ADDL" AS "ADL1" ON ("ADL1"."VENDOR" = "MSTR"."VENDOR"))
                  LEFT JOIN  ( SELECT "VEND_NO" AS "VENDOR",
@@ -73,7 +54,7 @@ insertSuppliers = """SELECT * INTO res_partner
                            end AS "FAX"
                          FROM "gss_V_VEND_MSTR_ADDL"
                        ) AS "ADL3" ON ("ADL3"."VENDOR" = "MSTR"."VENDOR"))
-                 WHERE "MSTR"."VENDOR" <> '') as outer;
+                 WHERE "MSTR"."VENDOR" <> '';
 
 """
 
@@ -117,4 +98,53 @@ phone = """	update "TABLE" set phone = replace(phone, '+', '');
         	phone
     	end;"""
 ext = """    /*case when  Length(ext) > 0 Then concat(PhoneFormat ," EXT " , ext) end;*/"""
+
+
+insertCustomers = """
+UPDATE "gss_V_CUSTOMER_MASTER" set "COUNTRY" = 'United States' where "COUNTRY"='United State';
+
+
+update "gss_V_CUSTOMER_MASTER" as "gss_cust" 
+set "COUNTRY"=(	select "country_id" 
+		from "res_country_state" as "rcs" 
+		where "gss_cust"."STATE"="rcs"."code" 
+		and "rcs"."country_id"<>254)
+where "COUNTRY" is null;
+
+
+
+INSERT INTO res_partner ("name", "street", "street2", "city", "state_id", "zip", "country_id",
+				"comment", "is_company", "customer", "active", "company_id", "notify_email", "phone","create_date","color","use_parent_address","employee","type","lang","create_uid","write_date","write_uid","display_name","supplier","opt_out","vat_subjected"
+)
+SELECT TRIM("NAME_CUSTOMER") AS "NAME", 
+	TRIM("ADDRESS1") AS "STREET", 
+	TRIM("ADDRESS2") AS "STREET2", 
+	TRIM("MSTR"."CITY") AS "CITY", 
+	(select id from res_country_state as rcs where (rcs.code = TRIM("MSTR"."STATE")) limit 1) AS "STATE_id", 
+	TRIM("ZIP") AS "ZIP", 
+	(select id from res_country as rc where (rc."name" = INITCAP(TRIM("MSTR"."COUNTRY"))) limit 1) AS "COUNTRY_id",
+        case when TRIM("ATTENTION")='' then ''
+        	else concat('ATTENTION: ' , TRIM("ATTENTION"))
+            end AS "COMMENT", 
+	'TRUE' AS "IS_COMPANY" , 
+	'TRUE' AS "CUSTOMER", 
+	'TRUE' AS "ACTIVE",
+	'1' AS "company_id",
+	'always' as "notify_email",
+        TRIM("MSTR"."TELEPHONE") AS "PHONE",
+	now() as "create_date", 
+	0 as "color", 
+	'false' as "use_parent_address",
+	'false' as "employee", 'contact' as "type", 'en_US' as "lang", '1' as "create_uid", 
+	now() as  "write_date", '1' as write_uid, trim("NAME_CUSTOMER") as "display_name", 
+	'false' as "supplier", 'false' as "opt_out", 
+	case when INITCAP("MSTR"."COUNTRY")='France' then true
+               	 when INITCAP("MSTR"."COUNTRY")='Ireland' then true
+               	 when INITCAP("MSTR"."COUNTRY")='Germany' then true
+               	 when INITCAP("MSTR"."COUNTRY")='Italy' then true
+               	 when INITCAP("MSTR"."COUNTRY")='Netherlands' then true
+        else false  end as "vat_subjected"
+       FROM "gss_V_CUSTOMER_MASTER" AS "MSTR";
+"""
+
 

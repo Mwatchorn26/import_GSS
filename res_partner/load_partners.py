@@ -1,4 +1,4 @@
-import insert_vendor
+import partners_sql
 from psyQuery import qry
 import pudb
 
@@ -7,13 +7,14 @@ import psyQuery
 
 
 
-def run_res_partner():
+def load():
     print("\n\nUPDATING RES_PARTNER")
     print("Inserting new vendors into res_partner")
 
-    print(insert_vendor.query_VENDOR_MASTER)
+    print("Inserting Suppliers next...")
 #    pudb.set_trace()
-    qry(partners_sql.insertSuppliers)
+#    qry(partners_sql.insertSuppliers)
+    print("Inserting Customers next...")
     qry(partners_sql.insertCustomers)
 
 
