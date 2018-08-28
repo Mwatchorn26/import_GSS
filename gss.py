@@ -8,6 +8,7 @@ import pudb
 import initialize
 import res_partner
 import mrp
+import project
 
 #conn_string=''
 
@@ -32,7 +33,7 @@ def run():
     # TESTED GOOD:   res_partner.load_partners.load()
 
     #PROJECTS
-    projects.load_projects.load()
+    project.load_projects.load()
 
     #MRP
     #folder . file . function

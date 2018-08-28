@@ -1,5 +1,5 @@
 insertAnalyticAccountParents="""
-nsert into "account_analytic_account" ("name",code,company_id,description,parent_id,state,"type",
+insert into "account_analytic_account" ("name",code,company_id,description,parent_id,state,"type",
     use_tasks, use_issues, user_id, write_uid,use_timesheets,date_start, write_date, create_date)
       select "odooName" as "name", "odooCode" as code,1 as company_id,
     upper(trim(GSS1."PROJECT")) || ' ' || upper(trim(GSS1."PRJ_DESCR")) || E'\n' || 'Section: ' || upper(trim(GSS1."PHASE")) || ' - ' || initcap(trim(GSS1."PHASE_DESCR"))
