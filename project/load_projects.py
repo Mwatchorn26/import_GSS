@@ -15,13 +15,17 @@ def add_analytic_view(strName,strCode):
 
 
 def load():
-    qry(AA_sql.insertAnalyticAccountParents)
-#    qry(AA_sql.insertAnalyticAccountChildren)
+# Not needed, work gets done in preceeding VBA #    qry(AA_sql.insertAnalyticAccountParents)
+# Not needed, work gets done in preceeding VBA #    qry(AA_sql.insertAnalyticAccountChildren)
 #    add_analytic_view("Automated Assembly", "AA")
 #    add_analytic_view("Contract Manufacturing", "CM")
 #    add_analytic_view("IT", "AA_IT")
 
-#    qry(projects_sql.insertProjects)
+#    qry(projects_sql.insertProjects1_MailAlias)
+   qry(projects_sql.insertProjects2_ProjectProject)
+#   qry(projects_sql.insertProjects3_MailAlias)
+#    qry(projects_sql.insertProjects4_TaskStages)
+
 
 #    qry(tasks_sql.insertTasks)
 
