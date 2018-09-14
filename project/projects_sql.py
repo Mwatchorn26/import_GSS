@@ -1,4 +1,13 @@
-insertProjects1_MailAlias="""
+deleteDevProjectData="""
+/* RESET PROJECT TABLES */
+delete from project_task_type_rel where project_id>6;
+delete from account_analytic_line where account_id>7;
+delete from account_analytic_account where id>7;
+delete from project_project where id >6;
+delete from mail_alias where id> 305;
+"""
+
+insertProject1_MailAlias="""
 
 insert into mail_alias (alias_defaults, alias_contact, alias_model_id, create_uid, alias_parent_thread_id, write_uid, alias_parent_model_id, alias_user_id, write_date,create_date)
 select '{''project_id'': ' || id ||'}' as alias_defaults, 
@@ -19,7 +28,7 @@ where parent_id in (select id
 """
 
 
-insertProjects2_ProjectProject="""
+insertProject2_ProjectProject="""
 /*CREATE PROJECTS */
 insert into project_project (alias_model, alias_id, write_uid, effective_hours, planned_hours, active,analytic_account_id, create_uid, progress_rate, "sequence",privacy_visibility, total_hours, state)
 select 'project.task' as alias_model, 

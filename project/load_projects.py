@@ -21,10 +21,10 @@ def load():
 #    add_analytic_view("Contract Manufacturing", "CM")
 #    add_analytic_view("IT", "AA_IT")
 
-#    qry(projects_sql.insertProjects1_MailAlias)
-   qry(projects_sql.insertProjects2_ProjectProject)
-#   qry(projects_sql.insertProjects3_MailAlias)
-#    qry(projects_sql.insertProjects4_TaskStages)
+    qry(projects_sql.insertProject1_MailAlias)
+    qry(projects_sql.insertProject2_ProjectProject)
+    qry(projects_sql.insertProject3_MailAlias)
+    qry(projects_sql.insertProject4_TaskStages)
 
 
 #    qry(tasks_sql.insertTasks)
